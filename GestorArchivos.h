@@ -24,8 +24,7 @@ private:
     bool leerRegistro(std::ifstream& f, char** campos, int numCampos, long& iter,
                       char sep = ',', int maxLen = 2048) const;
     bool abrirYContar(std::ifstream& f, const std::string& ruta, int& total, long& iter) const;
-    void liberar(char** campos, int n) const;
-
+    void liberar(char** campos, int n, long& iter) const;
     // ---- Conversiones manuales ----
     bool textoAEntero(const char* t, int& valor, long& iter) const;
     bool textoAFecha(const char* t, Fecha& fecha, long& iter) const;

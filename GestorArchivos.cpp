@@ -41,7 +41,7 @@ bool GestorArchivos::leerRegistro(std::ifstream& f, char** campos, int numCampos
             if (n >= maxLen) { error = true; break; }
             if (n + 1 >= cap) {
                 char* tmp = new char[cap * 2];
-                for (int i = 0; i < n; i++) tmp[i] = buf[i];
+                for (int i = 0; i < n; i++) { iter++; tmp[i] = buf[i]; }
                 delete[] buf;
                 buf = tmp;
                 cap *= 2;
@@ -59,7 +59,7 @@ bool GestorArchivos::leerRegistro(std::ifstream& f, char** campos, int numCampos
 
     bool ok = !error && campo == numCampos;
     if (!ok) {
-        for (int i = 0; i < campo; i++) delete[] campos[i];
+        for (int i = 0; i < campo; i++) { iter++; delete[] campos[i]; }
     }
     delete[] buf;      // delete[] sobre nullptr es seguro
     return ok;
@@ -78,8 +78,11 @@ bool GestorArchivos::abrirYContar(std::ifstream& f, const std::string& ruta,
     return ok;
 }
 
-void GestorArchivos::liberar(char** campos, int n) const {
-    for (int i = 0; i < n; i++) delete[] campos[i];
+void GestorArchivos::liberar(char** campos, int n, long& iter) const {
+    for (int i = 0; i < n; i++) {
+        iter++;
+        delete[] campos[i];
+    }
 }
 
 //Aqui van las conversiones de datos
@@ -127,8 +130,10 @@ bool GestorArchivos::textoAHora(const char* t, int& h, int& m, long& iter) const
     }
     if (t[5] != '\0' || t[2] != ':') return false;
     int idx[4] = {0, 1, 3, 4};
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
+        iter++;
         if (t[idx[i]] < '0' || t[idx[i]] > '9') return false;
+    }
     h = (t[0] - '0') * 10 + (t[1] - '0');
     m = (t[3] - '0') * 10 + (t[4] - '0');
     return h <= 23 && m <= 59;
@@ -173,7 +178,7 @@ bool GestorArchivos::cargarUsuarios(Usuario**& usuarios, int& n, long& iter) con
     }
 
     if (!ok) {
-        for (int j = 0; j < creados; j++) delete arr[j];
+        for (int j = 0; j < creados; j++) { iter++; delete arr[j]; }
         delete[] arr;
         return false;
     }

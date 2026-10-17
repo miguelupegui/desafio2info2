@@ -5,9 +5,7 @@ project(Desafio_II LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(Desafio_II main.cpp
-
-    lista.h)
+add_executable(Desafio_II main.cpp GestorArchivos.cpp GestorArchivos.h Fecha.cpp Fecha.h Mensaje.cpp Mensaje.h lista.h)
 
 include(GNUInstallDirs)
 install(TARGETS Desafio_II

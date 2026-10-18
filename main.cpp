@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+
 //clase provisional para que el codigo funcione
 class Usuario {
     char* datos[8];

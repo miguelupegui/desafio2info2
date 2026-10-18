@@ -5,7 +5,7 @@
 
 namespace {
 //mano le puse un limite porque aja, toca ponerle un limite a eso, si no que decarp
-    const int MAX_USUARIOS = 100000;
+    const int MAX_USUARIOS = 30000;
     const int MAX_TEXTO_BYTES = 2048;
     const int MAX_TEXTO_CARACTERES = 512;
 }
@@ -96,6 +96,30 @@ bool GestorArchivos::textoAEntero(const char* t, int& valor, long& iter) const {
         if (v > 100000000) return false;
     }
     valor = v;
+    return true;
+}
+bool GestorArchivos::cargarDatos(Usuario**& usuarios, int& n,
+                                 MatrizAdyacencia*& matriz, long& iter) const {
+    usuarios = nullptr;
+    n = 0;
+    matriz = nullptr;
+
+    if (!cargarUsuarios(usuarios, n, iter)) return false;   // se limpia sola
+
+    MatrizAdyacencia* m = new MatrizAdyacencia((short)n);
+    bool ok = cargarAmistades(*m, n, iter)
+              && cargarSolicitudes(usuarios, n, *m, iter)
+              && cargarAlbumes(usuarios, n, iter)
+              && cargarFotos(usuarios, n, iter)
+              && cargarMensajes(usuarios, n, *m, iter);
+
+    if (!ok) {
+        liberarCarga(usuarios, n, m, iter);
+        usuarios = nullptr;
+        n = 0;
+        return false;
+    }
+    matriz = m;
     return true;
 }
 bool GestorArchivos::textoAFecha(const char* t, Fecha& fecha, long& iter) const {

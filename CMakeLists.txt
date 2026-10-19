@@ -15,7 +15,9 @@ add_executable(Desafio_II main.cpp
     Menu.h Menu.cpp
     MediadorIteraciones.cpp MediadorIteraciones.h
     VI_Mensajes.cpp VisitarPerfil.cpp Memoria_Clases.cpp
-    Matrizadyacencia.h Matrizadyacencia.cpp)
+    MatrizAdyacencia.h MatrizAdyacencia.cpp
+    Album.h Album.cpp
+    Foto.h Foto.cpp)
 
 include(GNUInstallDirs)
 install(TARGETS Desafio_II

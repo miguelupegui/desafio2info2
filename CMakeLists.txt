@@ -5,7 +5,7 @@ project(Desafio_II LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(Desafio_II main.cpp GestorArchivos.cpp GestorArchivos.h Fecha.cpp Fecha.h Mensaje.cpp Mensaje.h MediadorIteraciones.cpp MediadorIteraciones.h VI_Mensajes.cpp VisitarPerfil.cpp Memoria_Clases.cpp)
+add_executable(Desafio_II main.cpp GestorArchivos.cpp GestorArchivos.h Fecha.cpp Fecha.h Mensaje.cpp Mensaje.h MediadorIteraciones.cpp MediadorIteraciones.h VI_Mensajes.cpp VisitarPerfil.cpp Memoria_Clases.cpp Foto.cpp Foto.h Album.cpp Album.h)
 
 include(GNUInstallDirs)
 install(TARGETS Desafio_II

@@ -60,6 +60,8 @@ public:
 
     // Orden cronologico: fecha, luego hora, luego minuto
     bool operator<(const Mensaje& otro) const;
+
+    long memoria() const;
 };
 
 #endif

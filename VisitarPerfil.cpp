@@ -1,54 +1,8 @@
-// Visualizar una foto = mostrar su ruta (enunciado); se agregan fecha, tamano y likes.
-void Foto::mostrar() const {
-    std::cout << "Foto: " << ruta << "\n  Fecha: ";
-    fecha.mostrar();
-    std::cout << "  Tamano: " << tamano << " bytes  Likes: " << likes << '\n';
-}
-void Album::recorrerCarrusel(long& iter) {
-    if (numFotos == 0) {                          // evita el modulo por cero
-        std::cout << "Este album no tiene fotos.\n";
-        return;
-    }
-
-    bool* likeDado = new bool[numFotos];
-    for (int i = 0; i < numFotos; i++) { iter++; likeDado[i] = false; }
-
-    int actual = 0;
-    bool salir = false;
-    while (!salir) {
-        iter++;
-        std::cout << "\nFoto " << (actual + 1) << " de " << numFotos
-                  << " - album " << nombre << '\n';
-        fotos[actual]->mostrar();
-        std::cout << "1. Siguiente  2. Previa  3. Dar/quitar like  4. Salir del album\n"
-                  << "Opcion: ";
-
-        char op, c;
-        if (!std::cin.get(op)) { salir = true; continue; }
-        if (op != '\n') {
-            while (std::cin.get(c) && c != '\n') iter++;
-        }
-
-        if (op == '1') {
-            actual = (actual + 1) % numFotos;
-        } else if (op == '2') {
-            actual = (actual - 1 + numFotos) % numFotos;
-        } else if (op == '3') {
-            if (!likeDado[actual]) { fotos[actual]->darLike(); likeDado[actual] = true; }
-            else { fotos[actual]->quitarLike(); likeDado[actual] = false; }
-        } else if (op == '4') {
-            salir = true;
-        } else {
-            std::cout << "Opcion invalida.\n";
-        }
-    }
-    delete[] likeDado;
-}
-long Album::memoriaCarrusel() const {
-    return (long)(numFotos * sizeof(bool) + sizeof(bool*) + sizeof(int) + sizeof(bool)
-                  + 2 * sizeof(char) + sizeof(void*));
-}
-
+#include <iostream>
+#include "Plataforma.h"
+#include "Usuario.h"
+#include "Album.h"
+#include "Foto.h"
 bool Usuario::visitarPerfil(Usuario& amigo, long& iter, long& memLocal) const {
     int total = amigo.getNumAlbumes();
     short* visibles = new short[total];          // posicion REAL de cada album visible
@@ -106,8 +60,8 @@ bool Usuario::visitarPerfil(Usuario& amigo, long& iter, long& memLocal) const {
     }
 
     memLocal += (long)(total * sizeof(short) + sizeof(short*) + 3 * sizeof(int)
-                       + 2 * sizeof(bool) + 2 * sizeof(char) + sizeof(Album*)
-                       + 3 * sizeof(void*))                    // referencias: amigo, iter, memLocal
+                        + 2 * sizeof(bool) + 2 * sizeof(char) + sizeof(Album*)
+                        + 3 * sizeof(void*))                    // referencias: amigo, iter, memLocal
                 + maxCarrusel;
     delete[] visibles;
     return resultado;
@@ -130,9 +84,9 @@ void Plataforma::funcionVisitarPerfil() {
 
     mediador.sumarIteraciones(iter);
     mediador.sumarMemoria(memoriaTotal()
-        + (long)(sizeof(iter) + sizeof(memLocal) + sizeof(nombre) + nombre.length()
-               + sizeof(amigo))
-        + 256
-        + memLocal);
+                          + (long)(sizeof(iter) + sizeof(memLocal) + sizeof(nombre) + nombre.length()
+                                    + sizeof(amigo))
+                          + 256
+                          + memLocal);
     mediador.mostrarConsumo();
 }

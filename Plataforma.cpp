@@ -1,7 +1,10 @@
 #include "Plataforma.h"
+#include <cstdlib>
+#include <ctime>
 
 Plataforma::Plataforma()
-    : usuarios(nullptr), numUsuarios(0), matriz(nullptr), usuarioActivo(nullptr) {}
+    : usuarios(nullptr), numUsuarios(0), matriz(nullptr), usuarioActivo(nullptr),
+    numFotosAmigos(0), fotosActualizadas(false) {}
 
 Plataforma::~Plataforma() {
     for (int i = 0; i < numUsuarios; i++) delete usuarios[i];
@@ -23,15 +26,20 @@ void Plataforma::ejecutar() {
     mediador.reiniciar();
     iter = 0;
     long memLocal = 0;
+    std::srand((unsigned)std::time(nullptr));      // para que las fotos al azar cambien en cada ejecucion
+    mediador.registrarTime();
     if (!iniciarSesion(iter, memLocal)) {
         menu.avisar("No fue posible iniciar sesion.");
         return;
     }
+    long memFotos = 0;
+    elegirFotosAmigos(iter, memFotos, false);
+    mostrarFotosAmigos();
+
     mediador.sumarIteraciones(iter);
-    mediador.sumarMemoria(memoriaTotal() + memLocal + (long)sizeof(iter));
+    mediador.sumarMemoria(memoriaTotal() + memLocal + memFotos + (long)sizeof(iter));
     mediador.mostrarConsumo();
 
-    // PENDIENTE: mostrar 3 fotos de perfil de amigos con prioridades
     menuPrincipal();
 }
 
@@ -61,13 +69,28 @@ void Plataforma::menuPrincipal() {
         int op = menu.leerOpcion(iter);
 
         if (op == 0 || op == -2) salir = true;
-        else if (op == 1) menu.avisar("Funcionalidad pendiente: administrar amistades.");
+        else if (op == 1) menuAmistades();
         else if (op == 2) funcionVisitarPerfil();
-        else if (op == 3) menu.avisar("Funcionalidad pendiente: sugerencias de amistad.");
+        else if (op == 3) funcionSugerencias();
         else if (op == 4) menuMensajes();
+        else if (op == 5) funcionActualizarFotos();
         else menu.avisar("Opcion invalida.");
 
         if (op >= 1 && op <= 4) guardarCambios();
+    }
+}
+
+void Plataforma::menuAmistades() {
+    bool volver = false;
+    while (!volver) {
+        menu.mostrarAmistades();
+        long iter = 0;
+        int op = menu.leerOpcion(iter);
+
+        if (op == 1) funcionEnviarSolicitud();
+        else if (op == 2) funcionAceptarSolicitudes();
+        else if (op == 0 || op == -2) volver = true;
+        else menu.avisar("Opcion invalida.");
     }
 }
 

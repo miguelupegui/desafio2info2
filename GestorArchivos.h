@@ -5,7 +5,7 @@
 #include <string>
 #include "Fecha.h"
 #include "Usuario.h"
-#include "MatrizAdyacencia.h"
+#include "Matrizadyacencia.h"
 
 // Lee y guarda los 6 archivos de Ude@Book. No usa cin/cout.
 class GestorArchivos {
@@ -68,6 +68,8 @@ public:
     bool cargarDatos(Usuario**& usuarios, int& n, MatrizAdyacencia*& matriz, long& iter) const;
 
     int guardarDatos(Usuario** usuarios, int n, const MatrizAdyacencia& matriz, long& iter) const;
+
+    long memoria() const;
 };
 
 #endif

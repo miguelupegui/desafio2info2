@@ -1,4 +1,4 @@
-#include "MatrizAdyacencia.h"
+#include "Matrizadyacencia.h"
 
 MatrizAdyacencia::MatrizAdyacencia(short n) : filas(nullptr), numUsuarios(n) {
     filas = new bool*[n];

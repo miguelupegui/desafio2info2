@@ -1,3 +1,10 @@
+#include "Plataforma.h"
+#include "GestorArchivos.h"
+#include "Matrizadyacencia.h"
+#include "Usuario.h"
+#include "Album.h"
+#include "Foto.h"
+#include "Mensaje.h"
 
 long Mensaje::memoria() const {
     // La Fecha, hora, minuto, leido y los punteros emisor/receptor ya estan en sizeof.
@@ -5,28 +12,18 @@ long Mensaje::memoria() const {
 }
 
 
-long Foto::memoria() const {
-    return (long)(sizeof(Foto) + ruta.length());
-}
-long Album::memoria() const {
-    long total = (long)(sizeof(Album) + nombre.length() + ruta.length());
-    total += (long)(capFotos * sizeof(Foto*));          // arreglo de punteros: capacidad
-    for (int i = 0; i < numFotos; i++)
-        total += fotos[i]->memoria();                   // Album es dueno de sus fotos
-    return total;
-}
 long Usuario::memoria() const {
     // Fechas y numeros ya estan en sizeof
     long total = (long)sizeof(Usuario);
     total += (long)(nombreUsuario.length() + clave.length() + correo.length()
-                    + rutaFotoPerfil.length() + ciudad.length() + pais.length());
+                     + rutaFotoPerfil.length() + ciudad.length() + pais.length());
 
     // Arreglos de punteros (capacidad reservada)
     total += (long)(capAlbumes * sizeof(Album*)
-                    + capEnviados * sizeof(Mensaje*)
-                    + capRecibidos * sizeof(Mensaje*)
-                    + capSolEnviadas * sizeof(Usuario*)
-                    + capSolRecibidas * sizeof(Usuario*));
+                     + capEnviados * sizeof(Mensaje*)
+                     + capRecibidos * sizeof(Mensaje*)
+                     + capSolEnviadas * sizeof(Usuario*)
+                     + capSolRecibidas * sizeof(Usuario*));
 
     // Objetos que posee
     for (int i = 0; i < numAlbumes; i++) total += albumes[i]->memoria();
@@ -42,9 +39,9 @@ long MatrizAdyacencia::memoria() const {
 }
 long GestorArchivos::memoria() const {
     return (long)(sizeof(GestorArchivos)
-                  + rutaUsuarios.length() + rutaAmistades.length()
-                  + rutaSolicitudes.length() + rutaAlbumes.length()
-                  + rutaFotos.length() + rutaMensajes.length());
+                   + rutaUsuarios.length() + rutaAmistades.length()
+                   + rutaSolicitudes.length() + rutaAlbumes.length()
+                   + rutaFotos.length() + rutaMensajes.length());
 }
 long Plataforma::memoriaTotal() const {
     long total = (long)sizeof(Plataforma);

@@ -18,6 +18,23 @@ bool agregarPuntero(T**& arreglo, int& cantidad, int& capacidad, T* elemento) {
     return true;
 }
 
+// saca el puntero y corre los de la derecha un puesto a la izquierda
+template <class T>
+bool quitarPuntero(T** arreglo, int& cantidad, T* elemento, long& iter) {
+    for (int i = 0; i < cantidad; i++) {
+        iter++;
+        if (arreglo[i] == elemento) {
+            for (int j = i; j < cantidad - 1; j++) {
+                iter++;
+                arreglo[j] = arreglo[j + 1];
+            }
+            cantidad--;
+            return true;
+        }
+    }
+    return false;
+}
+
 bool contiene(Usuario** arreglo, int cantidad, const Usuario* buscado) {
     for (int i = 0; i < cantidad; i++)
         if (arreglo[i] == buscado) return true;
@@ -38,14 +55,14 @@ Usuario::Usuario(const std::string& nombre, const std::string& clave_, const Fec
     solEnviadas(new Usuario*[4]), numSolEnviadas(0), capSolEnviadas(4),
     solRecibidas(new Usuario*[4]), numSolRecibidas(0), capSolRecibidas(4) {}
 
-// Copia solo los datos del perfil. Los albumes y mensajes pertenecen al usuario original:
+// copia solo los datos del perfil. Los albumes y mensajes pertenecen al usuario original:
 // copiar los punteros haria que dos usuarios los liberaran (doble delete).
 Usuario::Usuario(const Usuario& otro)
     : Usuario(otro.nombreUsuario, otro.clave, otro.fechaNacimiento, otro.correo,
               otro.rutaFotoPerfil, otro.ciudad, otro.pais, otro.fechaInscripcion,
               otro.indice) {}
 
-// Libera lo que posee. Recibidos y solicitudes apuntan a objetos ajenos: solo se libera el arreglo.
+// libera lo que posee. Recibidos y solicitudes apuntan a objetos ajenos: solo se libera el arreglo.
 Usuario::~Usuario() {
     for (int i = 0; i < numAlbumes; i++) delete albumes[i];
     for (int i = 0; i < numEnviados; i++) delete enviados[i];
@@ -84,4 +101,18 @@ bool Usuario::agregarSolicitudRecibida(Usuario* otro) {
     if (contiene(solRecibidas, numSolRecibidas, otro)) return false;  // ya recibida
     if (contiene(solEnviadas, numSolEnviadas, otro)) return false;    // yo ya le envie una
     return agregarPuntero(solRecibidas, numSolRecibidas, capSolRecibidas, otro);
+}
+
+bool Usuario::eliminarSolicitudEnviada(Usuario* otro, long& iter) {
+    return quitarPuntero(solEnviadas, numSolEnviadas, otro, iter);
+}
+
+bool Usuario::eliminarSolicitudRecibida(Usuario* otro, long& iter) {
+    return quitarPuntero(solRecibidas, numSolRecibidas, otro, iter);
+}
+
+bool Usuario::tieneSolicitudPendiente(const Usuario* otro, long& iter) const {
+    iter += numSolEnviadas + numSolRecibidas;
+    return contiene(solEnviadas, numSolEnviadas, otro)
+           || contiene(solRecibidas, numSolRecibidas, otro);
 }

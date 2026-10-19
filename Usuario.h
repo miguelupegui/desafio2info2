@@ -80,6 +80,9 @@ public:
     int getNumSolicitudesRecibidas() const { return numSolRecibidas; }
     Usuario* getSolicitudRecibida(int i) const { return solRecibidas[i]; }
     bool agregarSolicitudRecibida(Usuario* otro);
+    bool eliminarSolicitudEnviada(Usuario* otro, long& iter);
+    bool eliminarSolicitudRecibida(Usuario* otro, long& iter);
+    bool tieneSolicitudPendiente(const Usuario* otro, long& iter) const;
 
     bool enviarMensaje(Usuario& receptor, const std::string& texto, long& iter);
     int leerNuevosMensajes(long& iter);

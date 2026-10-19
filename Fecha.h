@@ -14,6 +14,7 @@ public:
     Fecha();                                   // 1/1/1
     Fecha(short d, short m, short a);
     Fecha(const Fecha& otra);
+    Fecha& operator=(const Fecha& otra) = default;
 
     // Getters
     short getDia() const { return dia; }

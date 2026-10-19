@@ -1,3 +1,8 @@
+#include <iostream>
+#include "Plataforma.h"
+#include "Usuario.h"
+#include "Mensaje.h"
+#include "Fecha.h"
 bool Usuario::textoMensajeValido(const std::string& t, long& iter) const {
     int bytes = (int)t.length();
     if (bytes == 0 || bytes > 2048) return false;
@@ -167,9 +172,9 @@ void Plataforma::funcionEnviarMensaje() {
 
     mediador.sumarIteraciones(iter);
     mediador.sumarMemoria(memoriaTotal()
-        + (long)(sizeof(iter) + sizeof(nombre) + nombre.length()
-               + sizeof(texto) + texto.length() + sizeof(amigo))
-        + 2049);
+                          + (long)(sizeof(iter) + sizeof(nombre) + nombre.length()
+                                    + sizeof(texto) + texto.length() + sizeof(amigo))
+                          + 2049);
     mediador.mostrarConsumo();
 }
 
@@ -203,7 +208,7 @@ void Plataforma::funcionBuscarPorRango() {
 
     mediador.sumarIteraciones(iter);
     mediador.sumarMemoria(memoriaTotal()
-        + (long)(sizeof(iter) + sizeof(ini) + sizeof(fin)));
+                          + (long)(sizeof(iter) + sizeof(ini) + sizeof(fin)));
     mediador.mostrarConsumo();
 }
 

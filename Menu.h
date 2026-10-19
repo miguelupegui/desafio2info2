@@ -20,6 +20,13 @@ public:
     int leerOpcion(long& iter) const;
     void mostrarPrincipal() const;
     void mostrarMensajes() const;
+    void mostrarAmistades() const;
+
+    int leerNumero(const char* pregunta, long& iter) const;
+    void mostrarFotoAmigo(int pos, const std::string& nombre, const std::string& ruta) const;
+    void mostrarSolicitud(int pos, const std::string& nombre) const;
+    void mostrarSugerencia(int pos, const std::string& nombre, int comunes) const;
+    void avisarResultadoSolicitud(int codigo) const;
 };
 
 #endif

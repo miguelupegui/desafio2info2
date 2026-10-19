@@ -6,7 +6,7 @@
 #include "MediadorIteraciones.h"
 #include "Menu.h"
 #include "Usuario.h"
-#include "MatrizAdyacencia.h"
+#include "Matrizadyacencia.h"
 
 // Esto carga los datos, autentica al usuario y reparte el trabajo del menu.
 // Es dueña de los usuarios y de la matriz de amistades.
@@ -19,10 +19,14 @@ private:
     int numUsuarios;
     MatrizAdyacencia* matriz;
     Usuario* usuarioActivo;
+    int fotosAmigos[3];
+    int numFotosAmigos;
+    bool fotosActualizadas;
 
     bool iniciarSesion(long& iter, long& memLocal);
     void menuPrincipal();
     void menuMensajes();
+    void menuAmistades();
     void guardarCambios();
 
     Usuario* buscarUsuario(const std::string& nombre, long& iter) const;
@@ -30,6 +34,16 @@ private:
     void funcionLeerNuevos();
     void funcionBuscarPorRango();
     void funcionVisitarPerfil();
+
+    // estas estan en Amistades.cpp y FotosAmigos.cpp
+    int enviarSolicitud(Usuario* destino, long& iter);
+    void funcionEnviarSolicitud();
+    void funcionAceptarSolicitudes();
+    void funcionSugerencias();
+
+    void elegirFotosAmigos(long& iter, long& memLocal, bool evitarPrevias);
+    void mostrarFotosAmigos() const;
+    void funcionActualizarFotos();
 
 public:
     Plataforma();

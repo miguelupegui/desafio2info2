@@ -4,16 +4,15 @@
 #include "Mensaje.h"
 
 namespace {
-//mano le puse un limite porque aja, toca ponerle un limite a eso, si no que decarp
-    const int MAX_USUARIOS = 30000;
-    const int MAX_TEXTO_BYTES = 2048;
-    const int MAX_TEXTO_CARACTERES = 512;
+const int MAX_USUARIOS = 30000;
+const int MAX_TEXTO_BYTES = 2048;
+const int MAX_TEXTO_CARACTERES = 512;
 }
 
 GestorArchivos::GestorArchivos()
     : rutaUsuarios("usuarios.csv"), rutaAmistades("amistades.csv"),
-      rutaSolicitudes("solicitudes.csv"), rutaAlbumes("albumes.csv"),
-      rutaFotos("fotos.csv"), rutaMensajes("mensajes.csv") {}
+    rutaSolicitudes("solicitudes.csv"), rutaAlbumes("albumes.csv"),
+    rutaFotos("fotos.csv"), rutaMensajes("mensajes.csv") {}
 bool GestorArchivos::leerRegistro(std::ifstream& f, char** campos, int numCampos,
                                   long& iter, char sep, int maxLen) const {
     int cap = 16, n = 0, campo = 0;
@@ -119,6 +118,10 @@ bool GestorArchivos::cargarDatos(Usuario**& usuarios, int& n,
         n = 0;
         return false;
     }
+    for (int i = 0; i < n; i++) {
+        iter++;
+        usuarios[i]->ordenarRecibidos(iter);
+    }
     matriz = m;
     return true;
 }
@@ -198,7 +201,7 @@ bool GestorArchivos::cargarUsuarios(Usuario**& usuarios, int& n, long& iter) con
             // AQUI VA UN CONSTRUCTOR PROVISIONAL, PONGA EL QUE USTED USE CUANDO LEA ESTO
             arr[creados++] = new Usuario(c[0], c[1], nac, c[3], c[4], c[5], c[6], ins, i);
         }
-        liberar(c, 8);
+        liberar(c, 8, iter);
     }
 
     if (!ok) {
@@ -223,7 +226,7 @@ bool GestorArchivos::cargarAmistades(MatrizAdyacencia& m, int numUsuarios, long&
 
         int a, b;
         bool ok = textoAEntero(c[0], a, iter) && textoAEntero(c[1], b, iter);
-        liberar(c, 2);
+        liberar(c, 2, iter);
         if (!ok || a >= numUsuarios || b >= numUsuarios || a == b) return false;
 
         m.conectar(a, b);
@@ -244,12 +247,12 @@ bool GestorArchivos::cargarSolicitudes(Usuario** usuarios, int numUsuarios,
 
         int e, r;
         bool ok = textoAEntero(c[0], e, iter) && textoAEntero(c[1], r, iter);
-        liberar(c, 2);
+        liberar(c, 2, iter);
         if (!ok || e >= numUsuarios || r >= numUsuarios || e == r) return false;
         if (m.sonAmigos(e, r)) return false;
 
-        if (!usuarios[r]->agregarSolicitudRecibida(e)) return false;
-        if (!usuarios[e]->agregarSolicitudEnviada(r)) return false;
+        if (!usuarios[r]->agregarSolicitudRecibida(usuarios[e])) return false;
+        if (!usuarios[e]->agregarSolicitudEnviada(usuarios[r])) return false;
     }
     return true;
 }
@@ -274,7 +277,7 @@ bool GestorArchivos::cargarAlbumes(Usuario** usuarios, int numUsuarios, long& it
             Album* a = new Album(c[1], c[2], c[3][0]);
             if (!usuarios[dueno]->agregarAlbum(a)) { delete a; ok = false; }
         }
-        liberar(c, 4);
+        liberar(c, 4, iter);
         if (!ok) return false;
     }
     return true;
@@ -304,7 +307,7 @@ bool GestorArchivos::cargarFotos(Usuario** usuarios, int numUsuarios, long& iter
             Album* al = usuarios[dueno]->getAlbum(pos);
             al->agregarFoto(new Foto(c[2], fecha, tam, likes));
         }
-        liberar(c, 6);
+        liberar(c, 6, iter);
         if (!ok) return false;
     }
     return true;
@@ -338,13 +341,13 @@ bool GestorArchivos::cargarMensajes(Usuario** usuarios, int numUsuarios,
             if (!usuarios[e]->agregarEnviado(msg)) { delete msg; ok = false; }
             else if (!usuarios[r]->agregarRecibido(msg)) ok = false;
         }
-        liberar(c, 6);
+        liberar(c, 6, iter);
         if (!ok) return false;
     }
     return true;
 }
 
-//Funciones que actualizan los datos en lel archivo
+//Funciones que actualizan los datos en el archivo
 bool GestorArchivos::textoSeguro(const std::string& t, char sep, long& iter) const {
     for (int i = 0; i < (int)t.length(); i++) {
         iter++;
@@ -453,4 +456,23 @@ bool GestorArchivos::guardarFotos(Usuario** usuarios, int n, long& iter) const {
             }
         }
     return f.good();
+}
+
+void GestorArchivos::liberarCarga(Usuario** usuarios, int n, MatrizAdyacencia* matriz, long& iter) const {
+    for (int i = 0; i < n; i++) {
+        iter++;
+        delete usuarios[i];
+    }
+    delete[] usuarios;
+    delete matriz;
+}
+
+// devuelve cuantos archivos no se pudieron guardar
+int GestorArchivos::guardarDatos(Usuario** usuarios, int n, const MatrizAdyacencia& matriz, long& iter) const {
+    int fallos = 0;
+    if (!guardarAmistades(matriz, n, iter)) fallos++;
+    if (!guardarSolicitudes(usuarios, n, iter)) fallos++;
+    if (!guardarMensajes(usuarios, n, iter)) fallos++;
+    if (!guardarFotos(usuarios, n, iter)) fallos++;
+    return fallos;
 }
